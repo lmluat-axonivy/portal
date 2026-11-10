@@ -298,6 +298,16 @@ public class TaskDetailsPage extends TemplatePage {
     return $("div[id$='workflow-events-dialog']").shouldBe(appear, DEFAULT_TIMEOUT);
   }
 
+  public List<String> getWorkflowEventsReflowSortOptions() {
+    return $$("select[id$='events-table_reflowDD'] option").shouldHave(CollectionCondition.sizeGreaterThan(0), DEFAULT_TIMEOUT)
+        .asFixedIterable().stream().map(option -> option.getAttribute("textContent")).collect(Collectors.toList());
+  }
+
+  public List<String> getWorkflowEventsSortableHeaderAriaLabels() {
+    return $$("div[id$='workflow-events-dialog'] th.ui-sortable-column:not([id$='_clone'])").shouldHave(CollectionCondition.sizeGreaterThan(0), DEFAULT_TIMEOUT)
+        .asFixedIterable().stream().map(header -> header.getAttribute("aria-label")).collect(Collectors.toList());
+  }
+
   public void closeWorkflowEventDialog() {
     $("div[id$='workflow-events-dialog'] .ui-dialog-titlebar-close").shouldBe(getClickableCondition(), DEFAULT_TIMEOUT).click();
     $("div[id$='workflow-events-dialog']").shouldBe(disappear, DEFAULT_TIMEOUT);
@@ -408,6 +418,23 @@ public class TaskDetailsPage extends TemplatePage {
 
   public SelenideElement getAllResponsible() {
     return $("[id$=':responsibles-more']").shouldBe(appear, DEFAULT_TIMEOUT);
+  }
+
+  public SelenideElement getUsersOfRoleButton() {
+    return $(".task-general-info-responsibles a[id$=':role-users-activator']");
+  }
+
+  public SelenideElement getUsersOfRoleOverlay() {
+    return $$("div[id$=':users-of-role-overlay']").findBy(Condition.visible);
+  }
+
+  public ElementsCollection getUsersOfRoleUsers() {
+    return getUsersOfRoleOverlay().$$(".ui-datascroller-item .name-after-avatar");
+  }
+
+  public void filterUsersOfRole(String keyword) {
+    getUsersOfRoleOverlay().$("input[id$=':ajax-keyword-filter']")
+        .shouldBe(appear, DEFAULT_TIMEOUT).setValue(keyword);
   }
 
   public SelenideElement getAllExpiryResponsible() {

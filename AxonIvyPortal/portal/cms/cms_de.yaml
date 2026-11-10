@@ -48,6 +48,7 @@ ch.ivy.addon.portalkit.ui.jsf:
       removedAbsences: Abwesenheit ist für {0} entfernt worden
       saveAbsenceSetting: Abwesenheitseinstellungen erfolgreich gespeichert.
       updateAbsence: Abwesenheit erfolgreich aktualisiert
+    SearchSubstitutes: Stellvertreter suchen
     absenceAndDeputy: Abwesenheiten und Vertretungen
     activeAbsence: Aktive abwesenheit
     allAbsences: Abwesenheiten aller Benutzer
@@ -653,6 +654,7 @@ ch.ivy.addon.portalkit.ui.jsf:
     showRelatedCaseInfo: Zugehöriger Vorgang
     showSystemNotes: Systemhinweise
     showSystemTasks: Systemaufgaben
+    skipToContent: Zum Inhalt springen
     sorting: Sortierung
     start: Start
     startProcess: Prozess starten
@@ -689,6 +691,7 @@ ch.ivy.addon.portalkit.ui.jsf:
     waitingDownloadMessage: Bitte um Geduld. Wir erstellen gerade den Export. Das kann einige Minuten dauern.
     warning: Warnung!
     welcomeToPortal: Willkommen, bitte melden Sie sich an
+    widgetActionMenuContext: Aktionsmenü für Widget {0} öffnen
     workingUser: Bearbeiter
     wrongDateFormat: Bitte geben Sie ein gültiges Datum ein.
     year: Jahr
@@ -771,11 +774,6 @@ ch.ivy.addon.portalkit.ui.jsf:
       filterToSee: Filtern, um mehr anzuzeigen
       loadMore: Mehr laden
       noUser: Es sind keine Benutzer vorhanden.
-      roleMemberItemFormat: <li class="tooltip-body-item">{0}</li>
-      roleMemberLineFormat: <p class="tooltip-body-item">{0}</p>
-      roleMembersTooltipFormat: |-
-        <p class="tooltip-header">{0}</p>
-        <ul style="margin: auto; {1}">{2}</ul>
       tooltipHelper: Klicken Sie hier, um alle Benutzer anzuzeigen, die diese Rolle direkt oder indirekt besitzen
       userOfRoleTitle: Benutzer der Gruppe {0}
     passwordValidation:
@@ -1386,6 +1384,9 @@ ch.ivy.addon.portalkit.ui.jsf:
     documents: Dokumente
     dueDate: Fällig
     duration: Dauer
+    editDelay: Sperrfrist bearbeiten
+    editExpiry: Ablauffrist bearbeiten
+    editExpiryActivator: Aktivierer der Ablauffrist bearbeiten
     events: Workflow-Ereignisse
     expiry: Ablauffrist
     failedDelayValidation: Der Zeitstempel der Aufgabenverzögerung darf kein leerer Wert oder ungültiges Datumsformat sein

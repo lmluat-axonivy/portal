@@ -48,6 +48,7 @@ ch.ivy.addon.portalkit.ui.jsf:
       removedAbsences: Absence supprimée pour {0}
       saveAbsenceSetting: Les paramètres d'absence ont été sauvegardés avec succès.
       updateAbsence: Absence mise à jour avec succès
+    SearchSubstitutes: Rechercher des remplaçants
     absenceAndDeputy: Absences et remplacements
     activeAbsence: Absence active
     allAbsences: Absences de tous les utilisateurs
@@ -653,6 +654,7 @@ ch.ivy.addon.portalkit.ui.jsf:
     showRelatedCaseInfo: Cas connexe
     showSystemNotes: Notes du système
     showSystemTasks: Tâches du système
+    skipToContent: Aller au contenu
     sorting: triage
     start: Démarrage
     startProcess: Démarrer le processus
@@ -689,6 +691,7 @@ ch.ivy.addon.portalkit.ui.jsf:
     waitingDownloadMessage: Nous créons l'export, cela peut prendre quelques minutes
     warning: Attention!
     welcomeToPortal: Bienvenue, veuillez vous connecter
+    widgetActionMenuContext: Ouvrir le menu d'actions pour le widget {0}
     workingUser: Gestionnaire
     wrongDateFormat: Veuillez entrer une date valide
     year: an
@@ -771,11 +774,6 @@ ch.ivy.addon.portalkit.ui.jsf:
       filterToSee: Filtrer pour en savoir plus
       loadMore: En savoir plus
       noUser: Il n'y a pas d'utilisateurs.
-      roleMemberItemFormat: <li class="tooltip-body-item">{0}</li>
-      roleMemberLineFormat: <p class="tooltip-body-item">{0}</p> <p class="tooltip-body-item">{0}<p>.
-      roleMembersTooltipFormat: |-
-        <p class="tooltip-header">{0}</p> <p>
-        <ul style="margin : auto ; {1}">{2}</ul>
       tooltipHelper: Cliquez pour afficher tous les utilisateurs qui possèdent ce rôle directement ou indirectement
       userOfRoleTitle: Utilisateur du groupe {0}
     passwordValidation:
@@ -1385,6 +1383,9 @@ ch.ivy.addon.portalkit.ui.jsf:
     documents: Documents
     dueDate: Échéance
     duration: Durée
+    editDelay: Modifier le retard
+    editExpiry: Modifier l'expiration
+    editExpiryActivator: Modifier l'activateur d'expiration
     events: Événements relatifs au flux de travail
     expiry: Expiration
     failedDelayValidation: L'horodatage du délai des tâches ne peut pas être une valeur vide ou un format de date non valide

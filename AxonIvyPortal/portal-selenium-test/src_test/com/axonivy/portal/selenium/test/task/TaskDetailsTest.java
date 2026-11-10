@@ -1,5 +1,9 @@
 package com.axonivy.portal.selenium.test.task;
 
+import static com.codeborne.selenide.CollectionCondition.size;
+import static com.codeborne.selenide.CollectionCondition.sizeGreaterThanOrEqual;
+import static com.codeborne.selenide.CollectionCondition.texts;
+
 import java.util.List;
 
 import org.junit.jupiter.api.AfterEach;
@@ -18,8 +22,6 @@ import com.axonivy.portal.selenium.page.CaseDetailsPage;
 import com.axonivy.portal.selenium.page.MainMenuPage;
 import com.axonivy.portal.selenium.page.TaskDetailsPage;
 import com.axonivy.portal.selenium.page.TopMenuTaskWidgetPage;
-import static com.codeborne.selenide.CollectionCondition.size;
-import static com.codeborne.selenide.CollectionCondition.sizeGreaterThanOrEqual;
 import com.codeborne.selenide.Condition;
 
 import ch.ivy.addon.portalkit.enums.PortalPermission;
@@ -52,6 +54,7 @@ public class TaskDetailsTest extends BaseTest {
   
   @AfterEach
   public void teardown() {
+    updateGlobalVariable(Variable.DISPLAY_USERS_OF_TASK_ACTIVATOR.getKey(), "false");
     permissions().denySpecificPortalPermission(PortalPermission.NOTE_READ_ALL_CASE_TASK_DETAILS);
   }
 
@@ -179,6 +182,32 @@ public class TaskDetailsTest extends BaseTest {
   }
   
   @Test
+  public void testUsersOfRoleOverlayAndFiltering() {
+    updateGlobalVariable(Variable.DISPLAY_USERS_OF_TASK_ACTIVATOR.getKey(), "true");
+    createTestingTasks();
+    redirectToNewDashBoard();
+    NavigationHelper.navigateToTaskList();
+    TopMenuTaskWidgetPage taskWidget = new TopMenuTaskWidgetPage();
+    taskWidget.expand().shouldHave(sizeGreaterThanOrEqual(1), DEFAULT_TIMEOUT);
+    String taskName = taskWidget.getNameOfTaskAt(0);
+
+    taskWidget.clickOnTaskActionLink(0);
+    taskWidget.clickTaskAction(0, "Delegate");
+    taskWidget.waitForTaskDelegateDialogContent();
+    taskWidget.selectDelegateResponsible("Backend Developer", true);
+
+    TaskDetailsPage taskDetailsPage = taskWidget.openDashboardTaskDetails(taskName);
+    taskDetailsPage.getUsersOfRoleButton().shouldBe(Condition.appear, DEFAULT_TIMEOUT).click();
+    taskDetailsPage.getUsersOfRoleOverlay().shouldBe(Condition.appear, DEFAULT_TIMEOUT);
+    taskDetailsPage.getUsersOfRoleUsers().shouldHave(size(2), DEFAULT_TIMEOUT)
+        .shouldHave(texts("Backend Developer 1", "Backend Developer 2"), DEFAULT_TIMEOUT);
+
+    taskDetailsPage.filterUsersOfRole("1");
+    taskDetailsPage.getUsersOfRoleUsers().shouldHave(size(1), DEFAULT_TIMEOUT)
+        .shouldHave(texts("Backend Developer 1"), DEFAULT_TIMEOUT);
+  }
+
+  @Test
   public void testMultipleExpiryResponsible() {
     redirectToRelativeLink(taskWithMultiResponsibles);
     login(TestAccount.ADMIN_USER);
@@ -245,6 +274,26 @@ public class TaskDetailsTest extends BaseTest {
     assertFalse(customFieldNames.isEmpty());
   }
   
+  @Test
+  public void testWorkflowEventsSortableColumnsHaveAccessibleName() {
+    redirectToRelativeLink(createCaseWithTechnicalCaseUrl);
+    redirectToNewDashBoard();
+    MainMenuPage mainMenuPage = new MainMenuPage();
+    mainMenuPage.openTaskList();
+    TopMenuTaskWidgetPage taskWidget = new TopMenuTaskWidgetPage();
+    taskWidget.openDashboardTaskDetails(ORDER_PIZZA);
+    TaskDetailsPage taskDetailsPage = new TaskDetailsPage();
+    taskDetailsPage.openWorkflowEventDialog();
+
+    List<String> sortOptions = taskDetailsPage.getWorkflowEventsReflowSortOptions();
+    assertFalse(sortOptions.isEmpty());
+    assertTrue(sortOptions.stream().noneMatch(option -> option.contains("null")));
+    assertTrue(sortOptions.contains("Event type Ascending"));
+
+    List<String> headerAriaLabels = taskDetailsPage.getWorkflowEventsSortableHeaderAriaLabels();
+    assertTrue(headerAriaLabels.stream().allMatch(label -> label != null && !label.startsWith(":")));
+  }
+
   @Test
   public void testShowNotesWhenGrantNoteReadAllPermissionInTaskDetails() {
     redirectToRelativeLink(CREATE_NOTES);
