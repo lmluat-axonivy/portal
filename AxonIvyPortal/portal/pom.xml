@@ -25,6 +25,7 @@
   </distributionManagement>
   <properties>
     <ivy.engine.version>14.0.0</ivy.engine.version>
+    <json.schema.base.url>https://lmluat-axonivy.github.io/portal/schemas/</json.schema.base.url>
   </properties>
   <dependencies>
     <dependency>
@@ -148,6 +149,7 @@
               <arguments>
                 <argument>${project.build.directory}/schemas</argument>
                 <argument>${project.version}</argument>
+                <argument>${json.schema.base.url}</argument>
               </arguments>
               <classpathScope>compile</classpathScope>
             </configuration>
