@@ -58,7 +58,7 @@ jobs:
           SCHEMA_DIR="AxonIvyPortal/portal/target/schemas"
           test -n "$(find "$SCHEMA_DIR" -mindepth 1 -maxdepth 1 -type d -print -quit)"
           for VERSION_DIR in "$SCHEMA_DIR"/*/; do
-            for SCHEMA in portal-dashboard-schema.json portal-statistic-schema.json portal-dashboard-template-schema.json; do
+            for SCHEMA in portal-dashboard-schema.json portal-custom-statistic-schema.json portal-dashboard-template-schema.json; do
               test -s "$VERSION_DIR$SCHEMA"
               python3 -m json.tool "$VERSION_DIR$SCHEMA" > /dev/null
             done

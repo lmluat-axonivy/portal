@@ -1,4 +1,4 @@
-package com.axonivy.portal.jsonschema;
+package com.axonivy.portal.schema;
 
 import java.io.IOException;
 import java.net.URI;
@@ -7,17 +7,18 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 
-import com.axonivy.portal.jsonschema.definition.PortalCustomStatistic;
-import com.axonivy.portal.jsonschema.definition.PortalDashboard;
-import com.axonivy.portal.jsonschema.definition.PortalDashboardTemplate;
-import com.axonivy.portal.jsonschema.generator.PortalSchemaGenerator;
+import com.axonivy.portal.dto.definition.PortalCustomStatistic;
+import com.axonivy.portal.dto.definition.PortalDashboard;
+import com.axonivy.portal.dto.definition.PortalDashboardTemplate;
+import com.axonivy.portal.schema.generator.PortalSchemaGenerator;
+import com.axonivy.portal.schema.helper.PortalSchemaHelper;
 
 public class PortalSchemaBuilder {
   private record SchemaDefinition(String fileName, Class<?> rootType) {}
 
   private static final List<SchemaDefinition> SCHEMAS = List.of(
       new SchemaDefinition("portal-dashboard-schema.json", PortalDashboard.class),
-      new SchemaDefinition("portal-statistic-schema.json", PortalCustomStatistic.class),
+      new SchemaDefinition("portal-custom-statistic-schema.json", PortalCustomStatistic.class),
       new SchemaDefinition("portal-dashboard-template-schema.json", PortalDashboardTemplate.class));
 
   public static void main(String[] args) throws IOException {
@@ -45,6 +46,7 @@ public class PortalSchemaBuilder {
       URI versionUri) throws IOException {
     Path outputFile = outputDir.resolve(definition.fileName());
     var schema = generator.generateSchema(definition.rootType());
+    PortalSchemaHelper.resolveRemoteReferences(schema, versionUri);
     schema.put("$id", versionUri.resolve(definition.fileName()).toString());
     Files.writeString(
         outputFile,
