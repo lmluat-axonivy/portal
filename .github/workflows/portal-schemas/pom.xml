@@ -15,6 +15,19 @@
     <schemas.directory>${project.basedir}/../../../AxonIvyPortal/portal/target/schemas/${project.version}</schemas.directory>
   </properties>
 
+  <repositories>
+    <repository>
+      <id>github</id>
+      <url>https://maven.pkg.github.com/lmluat-axonivy/portal</url>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+    </repository>
+  </repositories>
+
   <distributionManagement>
     <repository>
       <id>github</id>

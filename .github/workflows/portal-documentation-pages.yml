@@ -73,9 +73,7 @@ jobs:
                   "-f", ".github/workflows/portal-schemas/pom.xml",
                   "org.apache.maven.plugins:maven-dependency-plugin:3.8.1:unpack",
                   f"-Dartifact=com.axonivy.portal:portal-schema:{version}:zip",
-                  "-DremoteRepositories=github::default::https://maven.pkg.github.com/lmluat-axonivy/portal",
                   f"-DoutputDirectory={(site / 'schemas' / version).resolve()}",
-                  "-Dtransitive=false",
               ], check=True)
               print(f"Added schemas for Portal {version}")
           PY
