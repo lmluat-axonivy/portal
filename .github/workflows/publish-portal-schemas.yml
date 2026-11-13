@@ -33,7 +33,9 @@ jobs:
       - name: Check package version matches Portal
         run: |
           python3 - <<'PY'
+          import os
           import xml.etree.ElementTree as ET
+          from pathlib import Path
 
           ns = {"m": "http://maven.apache.org/POM/4.0.0"}
           portal = ET.parse("AxonIvyPortal/portal/pom.xml").getroot()
@@ -42,7 +44,15 @@ jobs:
           package_version = package.findtext("m:version", namespaces=ns)
           if not portal_version or portal_version != package_version:
               raise SystemExit(f"Version mismatch: Portal={portal_version}, package={package_version}")
+          schema_directory = (
+              Path(os.environ["GITHUB_WORKSPACE"])
+              / "AxonIvyPortal/portal/target/schemas"
+              / portal_version
+          ).resolve()
+          with open(os.environ["GITHUB_ENV"], "a", encoding="utf-8") as environment:
+              environment.write(f"SCHEMAS_DIRECTORY={schema_directory}\n")
           print(f"Building schemas for Portal {portal_version}")
+          print(f"Schema directory: {schema_directory}")
           PY
 
       - name: Generate schemas
@@ -98,6 +108,7 @@ jobs:
       - name: Package schemas
         run: >-
           mvn -B -ntp -f .github/workflows/portal-schemas/pom.xml
+          "-Dschemas.directory=${SCHEMAS_DIRECTORY}"
           clean package
 
       - name: Check ZIP contents
