@@ -61,18 +61,13 @@ jobs:
           python3 - <<'PY'
           import json
           import subprocess
-          import xml.etree.ElementTree as ET
           from pathlib import Path
 
           site = Path("target/portal-pages/portal")
-          versions = list(json.loads((site / "versions.json").read_text()).values())
-          if (site / "snapshot/dev").is_dir():
-              pom = ET.parse("Documentation/maven/pom.xml")
-              versions.append(pom.findtext("{*}properties/{*}revision"))
+          manifest = Path(".github/workflows/portal-schemas/versions.json")
+          versions = json.loads(manifest.read_text(encoding="utf-8"))["versions"]
 
           for version in dict.fromkeys(versions):
-              if int(version.split(".")[0]) < 14:
-                  continue
               subprocess.run([
                   "mvn", "-B", "-ntp", "-U",
                   "-f", ".github/workflows/portal-schemas/pom.xml",
@@ -82,7 +77,7 @@ jobs:
                   f"-DoutputDirectory={(site / 'schemas' / version).resolve()}",
                   "-Dtransitive=false",
               ], check=True)
-              print(f"Added schemas for documentation {version}")
+              print(f"Added schemas for Portal {version}")
           PY
 
       - name: Upload complete site for preview or deployment
