@@ -57,26 +57,7 @@ jobs:
       - name: Download published schemas and add them to the complete site
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          python3 - <<'PY'
-          import json
-          import subprocess
-          from pathlib import Path
-
-          site = Path("target/portal-pages/portal")
-          manifest = Path(".github/workflows/portal-schemas/versions.json")
-          versions = json.loads(manifest.read_text(encoding="utf-8"))["versions"]
-
-          for version in dict.fromkeys(versions):
-              subprocess.run([
-                  "mvn", "-B", "-ntp", "-U",
-                  "-f", ".github/workflows/portal-schemas/pom.xml",
-                  "org.apache.maven.plugins:maven-dependency-plugin:3.8.1:unpack",
-                  f"-Dartifact=com.axonivy.portal:portal-schema:{version}:zip",
-                  f"-DoutputDirectory={(site / 'schemas' / version).resolve()}",
-              ], check=True)
-              print(f"Added schemas for Portal {version}")
-          PY
+        run: python3 build/portal-pages/download_schemas.py
 
       - name: Upload complete site for preview or deployment
         uses: actions/upload-pages-artifact@v4
