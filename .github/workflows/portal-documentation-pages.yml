@@ -18,6 +18,9 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: read
     steps:
       - uses: actions/checkout@v7
 
@@ -25,6 +28,9 @@ jobs:
         with:
           distribution: 'temurin'
           java-version: '25'
+          server-id: github
+          server-username: GITHUB_ACTOR
+          server-password: GITHUB_TOKEN
 
       - uses: stCarolas/setup-maven@v5.1
         with:
@@ -48,23 +54,36 @@ jobs:
       - name: Prepare static selectors and navigation
         run: python3 build/portal-pages/build_site.py
 
-      - name: Generate schemas
-        run: >-
-          mvn -B -ntp -f AxonIvyPortal/portal/pom.xml
-          -Pjson.schema process-classes
-
-      - name: Copy generated schemas into the complete site
+      - name: Download published schemas and add them to the complete site
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          SCHEMA_DIR="AxonIvyPortal/portal/target/schemas"
-          test -n "$(find "$SCHEMA_DIR" -mindepth 1 -maxdepth 1 -type d -print -quit)"
-          for VERSION_DIR in "$SCHEMA_DIR"/*/; do
-            for SCHEMA in portal-dashboard-schema.json portal-custom-statistic-schema.json portal-dashboard-template-schema.json; do
-              test -s "$VERSION_DIR$SCHEMA"
-              python3 -m json.tool "$VERSION_DIR$SCHEMA" > /dev/null
-            done
-          done
-          mkdir -p target/portal-pages/portal/schemas
-          cp -R "$SCHEMA_DIR"/. target/portal-pages/portal/schemas/
+          python3 - <<'PY'
+          import json
+          import subprocess
+          import xml.etree.ElementTree as ET
+          from pathlib import Path
+
+          site = Path("target/portal-pages/portal")
+          versions = list(json.loads((site / "versions.json").read_text()).values())
+          if (site / "snapshot/dev").is_dir():
+              pom = ET.parse("Documentation/maven/pom.xml")
+              versions.append(pom.findtext("{*}properties/{*}revision"))
+
+          for version in dict.fromkeys(versions):
+              if int(version.split(".")[0]) < 14:
+                  continue
+              subprocess.run([
+                  "mvn", "-B", "-ntp", "-U",
+                  "-f", ".github/workflows/portal-schemas/pom.xml",
+                  "org.apache.maven.plugins:maven-dependency-plugin:3.8.1:unpack",
+                  f"-Dartifact=com.axonivy.portal:portal-schema:{version}:zip",
+                  "-DremoteRepositories=github::default::https://maven.pkg.github.com/lmluat-axonivy/portal",
+                  f"-DoutputDirectory={(site / 'schemas' / version).resolve()}",
+                  "-Dtransitive=false",
+              ], check=True)
+              print(f"Added schemas for documentation {version}")
+          PY
 
       - name: Upload complete site for preview or deployment
         uses: actions/upload-pages-artifact@v4
